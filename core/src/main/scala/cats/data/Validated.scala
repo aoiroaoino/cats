@@ -6,6 +6,7 @@ import cats.kernel.CommutativeSemigroup
 
 import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
+import scala.util.control.NonFatal
 
 sealed abstract class Validated[+E, +A] extends Product with Serializable {
 
@@ -561,7 +562,13 @@ private[data] trait ValidatedFunctions {
     try {
       valid(f)
     } catch {
-      case scala.util.control.NonFatal(t) => invalid(t)
+      case NonFatal(t) => invalid(t)
+    }
+
+  def catchNonFatalNel[A](f: => A): ValidatedNel[Throwable, A] =
+    try valid(f)
+    catch {
+      case NonFatal(e) => invalidNel(e)
     }
 
   /**

@@ -77,6 +77,11 @@ class ValidatedSuite extends CatsSuite {
     assert(Validated.catchNonFatal{ throw new Throwable("blargh") }.isInvalid)
   }
 
+  test("catchNonFatalNel catches non-fatal exceptions") {
+    assert(Validated.catchNonFatalNel{ "foo".toInt }.isInvalid)
+    assert(Validated.catchNonFatalNel{ throw new Throwable("blargh") }.isInvalid)
+  }
+
   test("fromTry is invalid for failed try"){
     forAll { t: Try[Int] =>
       t.isFailure should === (Validated.fromTry(t).isInvalid)
